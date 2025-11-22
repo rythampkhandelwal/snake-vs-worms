@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Snake vs Worms (Offline)</title>
+    <style>
+        body { margin: 0; background-color: #000; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; }
+        canvas { width: 100%; height: 100%; position: absolute; }
+    </style>
+</head>
+<body>
+    <canvas id="unity-canvas"></canvas>
+
+    <!-- FAKE POKI SDK v3 -->
+    <script>
+        console.log("Injecting Fake Poki SDK...");
+
+        // 1. Fix "initPokiBridge is not a function"
+        window.initPokiBridge = function(name) {
+            console.log("Game tried to init PokiBridge: " + name);
+        };
+
+        // 2. Create the main Mock SDK
+        window.PokiSDK = {
+            init: function() { return Promise.resolve(); },
+            gameLoadingFinished: function() { console.log("Game Loading Finished"); },
+            gameplayStart: function() { console.log("Gameplay Start"); },
+            gameplayStop: function() { console.log("Gameplay Stop"); },
+            commercialBreak: function() { return Promise.resolve(); },
+            rewardedBreak: function() { return Promise.resolve(true); },
+            displayAd: function() {},
+            destroyAd: function() {},
+            setDebug: function() {},
+            
+            // 3. FIX FOR YOUR NEW ERROR:
+            isAdBlocked: function() { 
+                console.log("Game checked for AdBlock (We said No)");
+                return false; 
+            },
+
+            // 4. Extra preventative mocks for other common errors
+            measureInterval: function() {},
+            getURLParam: function(name) { return ""; }
+        };
+    </script>
+    
+    <!-- Load the Unity Loader -->
+    <script src="bd9e1c5a0978dc23e94e995e31baa553.loader.js"></script>
+    
+    <script>
+        var canvas = document.querySelector("#unity-canvas");
+        
+        createUnityInstance(canvas, {
+            dataUrl: "abf82247143dfef9b153297faa3e3579.data",
+            frameworkUrl: "b331004f5b96abc7b333935f9e5ce48d.framework.js",
+            codeUrl: "298cecae74018e413e35de54f8c63a98.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "MyGamesIsland",
+            productName: "Snake vs Worms io Game",
+            productVersion: "1.3.1.15911",
+        }).then((unityInstance) => {
+            console.log("Game Loaded Successfully");
+        }).catch((message) => {
+            alert(message);
+        });
+    </script>
+</body>
+</html>
